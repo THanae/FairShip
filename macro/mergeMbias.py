@@ -4,13 +4,24 @@ import rootUtils as ut
 from ShipGeoConfig import ConfigRegistry
 
 from array import array
+import argparse
+
+ap = argparse.ArgumentParser()
+ap.add_argument('--DecayVolumeMedium', dest='DecayVolumeMedium', help='Set Decay Volume Medium. Choices are helium (default) or vacuums.', default='helium', choices=['helium', 'vacuums'])
+ap.add_argument('--shieldName', dest='shieldName', help='Name of the SC shield in the database. SC default: sc_v6, warm default: warm_opt.', default='sc_v6', choices=['sc_v6', 'warm_opt'])
+args = ap.parse_args()
+DecayVolumeMedium = args.DecayVolumeMedium
+shieldName = args.shieldName
+
 pdg  = ROOT.TDatabasePDG()
 mu   = pdg.GetParticle(13)
 Mmu  = mu.Mass()
 Mmu2 = Mmu * Mmu
 rnr  = ROOT.TRandom()
+
 eospath = ROOT.gSystem.Getenv("EOSSHIP")+"/eos/experiment/ship/data/"
-ship_geo = ConfigRegistry.loadpy("$FAIRSHIP/geometry/geometry_config.py", Yheight = 10.)
+
+ship_geo = ConfigRegistry.loadpy("$FAIRSHIP/geometry/geometry_config.py", DecayVolumeMedium=DecayVolumeMedium, shieldName=shieldName, Yheight = 10.)
 endOfHadronAbsorber = (ship_geo['hadronAbsorber'].z + ship_geo['hadronAbsorber'].length/2.) /100.
 startOfTarget       = -50. # value used for Geant4 production
 
