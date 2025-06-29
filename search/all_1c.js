@@ -46,7 +46,7 @@ var searchData=
   ['yraw_43',['Yraw',['../classTTCluster_1_1TTCluster.html#a98f2784ef77429233b4d3f2290180dfd',1,'TTCluster::TTCluster']]],
   ['yrec_44',['Yrec',['../classTTCluster_1_1TTCluster.html#a4ea7960ff74ee5cbf72093a4fa70ebca',1,'TTCluster::TTCluster']]],
   ['yspace_45',['ySpace',['../namespaceadd__noise__to__field.html#a8ad10ab502ec765188f76b5c1b807f90',1,'add_noise_to_field']]],
-  ['yvessel_46',['yvessel',['../classNuageGenerator.html#a8d385cdf256902453e0739f43ab5f3eb',1,'NuageGenerator::Yvessel'],['../classGenieGenerator.html#afcf19e34d58e8d82a19c9a03368f0b4a',1,'GenieGenerator::Yvessel']]],
+  ['yvessel_46',['Yvessel',['../classGenieGenerator.html#afcf19e34d58e8d82a19c9a03368f0b4a',1,'GenieGenerator']]],
   ['yy_47',['yy',['../classshipPid_1_1Task.html#a29002175bfbf37220b668c1a4f1a10fe',1,'shipPid::Task']]],
   ['yz_5fpoints_48',['yz_points',['../namespaceTTCluster.html#a629a4444240f0d3cae8096fd10409dbb',1,'TTCluster']]]
 ];
