@@ -17,8 +17,12 @@ ap.add_argument('-P', '--storePrimaries', action=argparse.BooleanOptionalAction,
 ap.add_argument('--target_composition', default='W',
                 help="Target composition (to determine the ratio of protons in the material). Default is Tungsten (W). Only other choice is Molybdenum (Mo)", choices=['W', 'Mo'])
 ap.add_argument('--pythia_tune', default='PoorE791',
-                help="Choices of Pythia tune are PoorE791 (default, settings with default Pythia6 pdf, based on getting <pt> at 500 GeV pi-) or LHCb (settings by LHCb for Pythia 6.427)",
+                help="For pythia6 only. Choices of Pythia tune are PoorE791 (default, settings with default Pythia6 pdf, based on getting <pt> at 500 GeV pi-) or LHCb (settings by LHCb for Pythia 6.427)",
                 choices=['PoorE791', 'LHCb'])
+ap.add_argument('--pdfpset', type=int, default=13,
+                help="For pythia8 only. Parton densities to use. Default 13")
+ap.add_argument('--pythia_version', default='pythia6',
+                help="Choices of Pythia versions: pythia6 or pythia8", choices=['pythia6', 'pythia8'])
 # some parameters for generating the chi (sigma(signal)/sigma(total) as a function of momentum
 ap.add_argument('--nev', type=int, default=5000, help="Events / momentum")
 ap.add_argument('--nrpoints', type=int, default=20, help="Number of momentum points taken to calculate sig/sigtot")
@@ -31,13 +35,13 @@ print(f'Generate {args.nevgen}  p.o.t. with msel = {args.mselcb} proton beam {ar
 print(f'Output ntuples written to: {args.Fntuple}')
 
 # cascade beam particles, anti-particles are generated automatically if they exist.
-idbeam = [2212, 211, 2112, 321, 130, 310]
-target = ['p+','n0']
+idbeam = [2212]  # , 211, 2112, 321, 130, 310]
+target = [2212, 2112]  # ['p+','n0']
 print(f'Chi generation with {args.nev} events/point, nr points={args.nrpoints}')
 print(f'Cascade beam particle: {idbeam}')
 
 # fracp is the fraction of protons in nucleus, used to average chi on p and n target in Pythia.
-if target == 'W': # target is Tungsten, fracp is 74/(184)
+if args.target_composition == 'W': # target is Tungsten, fracp is 74/(184)
     fracp = 0.40
 else: # target would then be Molybdenum, fracp is 42/98
     fracp = 0.43
@@ -57,8 +61,19 @@ else:
    sys.exit('ERROR on input, exit')
 
 PDG = ROOT.TDatabasePDG.Instance()
-myPythia = ROOT.TPythia6()
-tp = ROOT.tPythia6Generator()
+if args.pythia_version == 'pythia6':
+    myPythia = ROOT.TPythia6()
+    tp = ROOT.tPythia6Generator()
+else:
+    # myPythia = ROOT.TPythia8()
+    myPythia = ROOT.Pythia8.Pythia()
+    tp = ROOT.Pythia8Generator()
+    myPythia.readString("Next::numberCount = 10000")
+    myPythia.readString("Init:showProcesses = off")
+    myPythia.readString("Init:showMultipartonInteractions = off")
+    myPythia.readString("Init:showChangedSettings = off")
+    myPythia.readString("Init:showChangedParticleData = off")
+
 
 # Pythia6 can only accept names below in pyinit, hence reset PDG table:
 PDG.GetParticle(2212).SetName('p+')
@@ -67,9 +82,13 @@ PDG.GetParticle(2112).SetName('n0')
 PDG.GetParticle(-2112).SetName('nbar0')
 PDG.GetParticle(130).SetName('KL0')
 PDG.GetParticle(310).SetName('KS0')
-# lower lowest sqrt(s) allowed for generating events
-myPythia.SetPARP(2, 2.)
 
+# lower lowest sqrt(s) allowed for generating events
+if args.pythia_version == 'pythia6':
+    myPythia.SetPARP(2, 2.)
+#else:
+#    myPythia.readString('Beams:allowVariableEnergy = on')
+#    myPythia.readString('Beams:eMinPert = 2.')
 
 def PoorE791_tune(P6):
     # settings with default Pythia6 pdf, based on getting <pt> at 500 GeV pi-
@@ -145,17 +164,22 @@ def fillp1(hist):
                 p1 = p2
 
 
-if args.pythia_tune == 'PoorE791':
-    PoorE791_tune(myPythia)
-    myPythia.OpenFortranFile(11, os.devnull)  # Pythia output to dummy (11) file (to screen use 6)
-    myPythia.SetMSTU(11, 11)
-else:
-    LHCb_tune(myPythia)
-    myPythia.OpenFortranFile(6, os.devnull)  # avoid any printing to the screen, only when LHAPDF is used, in LHCb tune
+if args.pythia_version == 'pythia6':
+    if args.pythia_tune == 'PoorE791':
+        PoorE791_tune(myPythia)
+        myPythia.OpenFortranFile(11, os.devnull)  # Pythia output to dummy (11) file (to screen use 6)
+        myPythia.SetMSTU(11, 11)
+    else:
+        LHCb_tune(myPythia)
+        myPythia.OpenFortranFile(6, os.devnull)  # avoid any printing to the screen, only when LHAPDF is used, in LHCb tune
 
 # start with different random number for each run...
 print(f'Setting random number seed = {args.seed}')
-myPythia.SetMRPY(1, args.seed)
+if args.pythia_version == 'pythia6':
+    myPythia.SetMRPY(1, args.seed)
+else:
+    myPythia.readString('Random:setSeed = on')
+    myPythia.readString(f'Random:seed = {args.seed}')
 
 # histogram helper
 h = {}
@@ -175,10 +199,10 @@ for idp in range(0, len(idbeam)):
             id = id + 1
             for idnp in range(2):
                 idb = id * 10 + idnp * 4
-                ut.bookHist(h, str(idb + 1), f'sigma vs p, {name} -> {target[idnp]}', nb, 0.5, args.pbeamh + 0.5)
-                ut.bookHist(h, str(idb + 2), f'sigma-tot vs p, {name} -> {target[idnp]}', nb, 0.5, args.pbeamh + 0.5)
-                ut.bookHist(h, str(idb + 3), f'chi vs p, {name}-> {target[idnp]}', nb, 0.5, args.pbeamh + 0.5)
-                ut.bookHist(h, str(idb + 4), f'Prob(normalised), {name} -> {target[idnp]}', nb, 0.5, args.pbeamh + 0.5)
+                ut.bookHist(h, str(idb + 1), f'sigma vs p, {name} -> {PDG.GetParticle(target[idnp]).GetName()}', nb, 0.5, args.pbeamh + 0.5)
+                ut.bookHist(h, str(idb + 2), f'sigma-tot vs p, {name} -> {PDG.GetParticle(target[idnp]).GetName()}', nb, 0.5, args.pbeamh + 0.5)
+                ut.bookHist(h, str(idb + 3), f'chi vs p, {name}-> {PDG.GetParticle(target[idnp]).GetName()}', nb, 0.5, args.pbeamh + 0.5)
+                ut.bookHist(h, str(idb + 4), f'Prob(normalised), {name} -> {PDG.GetParticle(target[idnp]).GetName()}', nb, 0.5, args.pbeamh + 0.5)
             # keep track of histogram<->Particle id relation.
             idhist[id] = idw
             for idpn in range(2):  # target is proton or neutron
@@ -190,24 +214,66 @@ for idp in range(0, len(idbeam)):
                     ibin = h[str(id * 10 + 1+ idadd)].FindBin(pbw, 0., 0.)
                     pbw = h[str(id * 10 + 1 + idadd)].GetBinCenter(ibin)
                     # new particle/momentum, init again, first signal run.
-                    myPythia.SetMSEL(args.mselcb)  # set forced ccbar or bbbar generation
-                    myPythia.Initialize('FIXT', name, target[idpn], pbw)
+                    if args.pythia_version == 'pythia6':
+                        myPythia.SetMSEL(args.mselcb)  # set forced ccbar or bbbar generation
+                        myPythia.Initialize('FIXT', name, PDG.GetParticle(target[idnp]).GetName(), pbw)
+                    else:
+                        if args.mselcb == 4:
+                            myPythia.readString('HardQCD:hardccbar = on')
+                            # myPythia.readString('HardQCD:gg2ccbar = on')
+                            # myPythia.readString('HardQCD:qqbar2ccbar = on')
+                        else:  # args.mselcb == 5
+                            myPythia.readString('HardQCD:hardbbbar = on')
+                            # myPythia.readString('HardQCD:gg2bbbar = on')
+                            # myPythia.readString('HardQCD:qqbar2bbbar = on')
+                        myPythia.readString('Beams:frameType = 2')
+                        myPythia.readString(f'Beams:idA = {idw}')
+                        myPythia.readString(f'Beams:idB = {target[idpn]}')
+                        myPythia.readString(f'Beams:eA = {pbw}')
+                        myPythia.readString(f'Beams:eB = 0')
+                        myPythia.readString(f'PDF:pSet = {args.pdfpset}')
+                        myPythia.init()
+
                     for iev in range(args.nev):
-                        myPythia.GenerateEvent()
+                        if args.pythia_version == 'pythia6':
+                            myPythia.GenerateEvent()
+                        else:
+                            myPythia.next()
+
                     # signal run finished, get cross-section
-                    h[str(id * 10 + 1 + idadd)].Fill(pbw, tp.getPyint5_XSEC(2, 0))
-                    myPythia.SetMSEL(2)  # now total cross-section, i.e. msel=2
-                    myPythia.Initialize('FIXT', name, target[idpn], pbw)
+                    if args.pythia_version == 'pythia6':
+                        h[str(id * 10 + 1 + idadd)].Fill(pbw, tp.getPyint5_XSEC(2, 0))
+                    else:
+                        h[str(id * 10 + 1 + idadd)].Fill(pbw, myPythia.info.sigmaGen())
+
+                    if args.pythia_version == 'pythia6':
+                        myPythia.SetMSEL(2)  # now total cross-section, i.e. msel=2
+                        myPythia.Initialize('FIXT', name, PDG.GetParticle(target[idpn]).GetName(), pbw)
+                    else:
+                        myPythia.readString('SoftQCD:all = on')
+                        myPythia.readString('Beams:frameType = 2')
+                        myPythia.readString(f'Beams:idA = {idw}')
+                        myPythia.readString(f'Beams:idB = {target[idpn]}')
+                        myPythia.readString(f'Beams:eA = {pbw}')
+                        myPythia.readString(f'Beams:eB = 0')
+                        myPythia.init()
+
                     for iev in range(args.nev//10):
                     # if iev%100==0: print 'generated mbias events',iev,' seconds:',time.time()-t0
-                        myPythia.GenerateEvent()
+                        if args.pythia_version == 'pythia6':
+                            myPythia.GenerateEvent()
+                        else:
+                            myPythia.next()
                     # get cross-section
-                    h[str(id * 10 + 2 + idadd)].Fill(pbw, tp.getPyint5_XSEC(2, 0))
+                    if args.pythia_version == 'pythia6':
+                        h[str(id * 10 + 2 + idadd)].Fill(pbw, tp.getPyint5_XSEC(2, 0))
+                    else:
+                        h[str(id * 10 + 2 + idadd)].Fill(pbw, myPythia.info.sigmaGen())
+
                 # for this beam particle, do arithmetic to get chi.
                 h[str(id * 10 + 3 + idadd)].Divide(h[str(id * 10 + 1 + idadd)], h[str(id * 10 + 2 + idadd)], 1., 1.)
                 # fill with linear function between evaluated momentum points.
                 fillp1(h[str(id * 10 + 3 + idadd)])
-
 # collected all, now re-scale to make max chi at 400 Gev==1.
 chimx = 0.
 for i in range(1, id + 1):
@@ -233,18 +299,24 @@ ut.bookHist(h,str(5), 'D0 pt', 100, 0., 10.)
 ut.bookHist(h,str(6), 'D0 XF', 100, -1., 1.)
 
 ftup = ROOT.TFile.Open(args.Fntuple, 'RECREATE')
-Ntup = ROOT.TNtuple("pythia6", "pythia6 heavy flavour",\
+Ntup = ROOT.TNtuple(f"{args.pythia_version}", f"{args.pythia_version} heavy flavour",\
        "id:px:py:pz:E:M:mid:mpx:mpy:mpz:mE:mM:k:a0:a1:a2:a3:a4:a5:a6:a7:a8:a9:a10:a11:a12:a13:a14:a15:\
 s0:s1:s2:s3:s4:s5:s6:s7:s8:s9:s10:s11:s12:s13:s14:s15")
 
 # make sure all particles for cascade production are stable
 for kf in idbeam:
-    kc = myPythia.Pycomp(kf)
-    myPythia.SetMDCY(kc,1,0)
+    if args.pythia_version == 'pythia6':
+        kc = myPythia.Pycomp(kf)
+        myPythia.SetMDCY(kc,1,0)
+    else:
+        myPythia.readString(f'{idbeam}::mayDecay = false')
 # make charm or beauty signal hadrons stable
 for kf in idsig:
-    kc = myPythia.Pycomp(kf)
-    myPythia.SetMDCY(kc,1,0)
+    if args.pythia_version == 'pythia6':
+        kc = myPythia.Pycomp(kf)
+        myPythia.SetMDCY(kc,1,0)
+    else:
+        myPythia.readString(f'{idsig}::mayDecay = false')
 
 stack = 1000 * [0]  # declare the stack for the cascade particles
 for iev in range(args.nevgen):
@@ -268,23 +340,59 @@ for iev in range(args.nevgen):
                 prbsig = h[str(idw)].GetBinContent(ib)
         if prbsig > random.random():
             # last particle on the stack as beam particle
-            for k in range(1, 4):
-                myPythia.SetP(1, k, stack[nstack][k])
-                myPythia.SetP(2, k, 0.)
+            if args.pythia_version == 'pythia6':
+                for k in range(1, 4):
+                    myPythia.SetP(1, k, stack[nstack][k])
+                    myPythia.SetP(2, k, 0.)
+            else:
+                myPythia.readString(f"Beams:eA = {stack[nstack][0]}")
+                myPythia.readString(f"Beams:pxA = {stack[nstack][1]}")
+                myPythia.readString(f"Beams:pyA = {stack[nstack][2]}")
+                myPythia.readString(f"Beams:pzA = {stack[nstack][3]}")
+                myPythia.readString(f"Beams:eB = 0")
+                myPythia.readString(f"Beams:pxB = 0")
+                myPythia.readString(f"Beams:pyB = 0")
+                myPythia.readString(f"Beams:pzB = 0")
+
             # new particle/momentum, init again: signal run.
-            myPythia.SetMSEL(args.mselcb)  # set forced ccbar or bbbar generation
-            myPythia.Initialize('3MOM', PDG.GetParticle(stack[nstack][0]).GetName(), target[idpn], 0.)
-            myPythia.GenerateEvent()
+            if args.pythia_version == 'pythia6':
+                myPythia.SetMSEL(args.mselcb)  # set forced ccbar or bbbar generation
+                myPythia.Initialize('3MOM', PDG.GetParticle(stack[nstack][0]).GetName(), PDG.GetParticle(target[idpn]).GetName(), 0.)
+                myPythia.GenerateEvent()
+            else:
+                if args.mselcb == 4:
+                    myPythia.readString('HardQCD:hardccbar = on')
+                else:  # args.mselcb == 5
+                    myPythia.readString('HardQCD:hardbbbar = on')
+                    myPythia.readString(f'Beams:idA = {stack[nstack][0]}')
+                    myPythia.readString(f'Beams:idB = {target[idpn]}')
+                myPythia.readString('Beams:frameType = 3')
+                myPythia.init()
+                myPythia.next()
+
             # look for the signal particles
             charmFound = []
-            for itrk in range(1,myPythia.GetN() + 1):
-                idabs = ROOT.TMath.Abs(myPythia.GetK(itrk, 2))
+            if args.pythia_version == 'pythia6':
+                event_size = myPythia.GetN()
+            else:
+                event_size = myPythia.event.size() - 1
+            for itrk in range(1, event_size + 1):
+                if args.pythia_version == 'pythia6':
+                    idabs = ROOT.TMath.Abs(myPythia.GetK(itrk, 2))
+                else:
+                    idabs = myPythia.event[itrk].idAbs()
                 if idabs in idsig:  # if signal is found, store in ntuple
                      vl = array('f')
-                     vl.append(float(myPythia.GetK(itrk, 2)))
+                     if args.pythia_version == 'pythia6':
+                         vl.append(float(myPythia.GetK(itrk, 2)))
+                     else:
+                         vl.append(float(myPythia.event[itrk].id()))
                      for i in range(1, 6):
                          vl.append(float(myPythia.GetP(itrk, i)))
-                     vl.append(float(myPythia.GetK(1, 2)))
+                     if args.pythia_version == 'pythia6':
+                         vl.append(float(myPythia.GetK(1, 2)))
+                     else:
+                         vl.append(float(myPythia.event[1].id()))
                      for i in range(1, 6):
                          vl.append(float(myPythia.GetP(1, i)))
                      vl.append(float(stack[nstack][4]))
@@ -315,12 +423,24 @@ for iev in range(args.nevgen):
                          xf = pDcm / pbcm
                          h['6'].Fill(xf)
             if len(charmFound) > 0 and args.storePrimaries:
-                for itP in range(1, myPythia.GetN() + 1):
+                if args.pythia_version == 'pythia6':
+                    event_size = myPythia.GetN()
+                else:
+                    event_size = myPythia.event.size() - 1
+                for itP in range(1, event_size + 1):
                     if itP in charmFound: continue
-                    if myPythia.GetK(itP, 1) == 1:
+                    if args.pythia_version =='pythia6':
+                        itp_stable = myPythia.GetK(itP, 1)
+                    else:
+                        itp_stable = myPythia.event[itP].statusHepMC()
+                    if itp_stable == 1:
                         # store only undecayed particle and no charm found
                         # ***WARNING****: with new with new ancestor and process info (a0-15, s0-15) add to ntuple, might not work???
-                        Ntup.Fill(float(myPythia.GetK(itP,2)),float(myPythia.GetP(itP, 1)),float(myPythia.GetP(itP, 2)),float(myPythia.GetP(itP, 3)),\
+                        if args.pythia_version == 'pythia6':
+                            itp_id = myPythia.GetK(itP, 2) 
+                        else:
+                            itp_id = myPythia.event[itP].id()
+                        Ntup.Fill(float(itp_id),float(myPythia.GetP(itP, 1)),float(myPythia.GetP(itP, 2)),float(myPythia.GetP(itP, 3)),\
                             float(myPythia.GetP(itP,4)),float(myPythia.GetP(itP, 5)),-1,\
                             float(myPythia.GetV(itP,1)-myPythia.GetV(charmFound[0], 1)),\
                             float(myPythia.GetV(itP,2)-myPythia.GetV(charmFound[0], 2)),\
@@ -331,11 +451,22 @@ for iev in range(args.nevgen):
             myPythia.SetP(1, k, stack[nstack][k])
             myPythia.SetP(2, k, 0.)
         # new particle/momentum, init again, generate total cross-section event
-        myPythia.SetMSEL(2)  # mbias event
+        if args.pythia_version == 'pythia6':
+            myPythia.SetMSEL(2)  # mbias event
+        else:
+            myPythia.readString('SoftQCD:all = on')
+
         idpn = 0
         if random.random() > fracp: idpn = 1
-        myPythia.Initialize('3MOM', PDG.GetParticle(stack[nstack][0]).GetName(), target[idpn], 0.)
-        myPythia.GenerateEvent()
+        if args.pythia_version == 'pythia6':
+            myPythia.Initialize('3MOM', PDG.GetParticle(stack[nstack][0]).GetName(), PDG.GetParticle(target[idpn]).GetName(), 0.)
+            myPythia.GenerateEvent()
+        else:
+            myPythia.readString(f'Beams:idA = {stack[nstack][0]}')
+            myPythia.readString(f'Beams:idB = {target[idpn]}')
+            myPythia.readString('Beams:frameType = 3')
+            myPythia.init()
+            myPythia.next()
         # remove used particle from the stack, before adding new
         # first store its history: cascade depth and ancestors-list
         icas = stack[nstack][4] + 1
@@ -345,21 +476,35 @@ for iev in range(args.nevgen):
         # fill in interaction process of first proton
         if nstack == 0: sublist[0] = myPythia.GetMSTI(1)
         nstack = nstack - 1
-        for itrk in range(1, myPythia.GetN() + 1):
-            if myPythia.GetK(itrk, 1) == 1:
+        if args.pythia_version == 'pythia6':
+            event_size = myPythia.GetN()
+        else:
+            event_size = myPythia.event.size() - 1
+        for itrk in range(1, event_size + 1):
+            if args.pythia_version == 'pythia6':
+                itrk_stable = myPythia.GetK(itrk, 1)
+            else:
+                itrk_stable = myPythia.event[itrk].statusHepMC()
+            if itrk_stable == 1:
                 ptot = ROOT.TMath.Sqrt(myPythia.GetP(itrk, 1) ** 2 + myPythia.GetP(itrk, 2) ** 2 + myPythia.GetP(itrk, 3) ** 2)
                 if ptot > pbeaml:
                     # produced particle is stable and has enough momentum, is it in the wanted list?
                     for isig in range(len(idbeam)):
-                        if ROOT.TMath.Abs(myPythia.GetK(itrk, 2)) == idbeam[isig] and nstack < 999:
+                        if args.pythia_version == 'pythia6':
+                           itrk_id = myPythia.GetK(itrk, 2)
+                           itrk_absid = ROOT.TMath.Abs(myPythia.GetK(itrk, 2))
+                        else:
+                           itrk_id = myPythia.event[itrk].id()
+                           itrk_absid = myPythia.event[itrk].idAbs() 
+                        if itrk_absid == idbeam[isig] and nstack < 999:
                             if nstack < 999: nstack += 1
                             # update ancestor list
                             tmp=copy.copy(anclist)
-                            tmp[icas-1] = myPythia.GetK(itrk, 2)
+                            tmp[icas-1] = itrk_id
                             stmp = copy.copy(sublist)
                             # Pythia interaction process identifier
                             stmp[icas-1] = myPythia.GetMSTI(1)
-                            stack[nstack] = [myPythia.GetK(itrk, 2), myPythia.GetP(itrk, 1), myPythia.GetP(itrk, 2),myPythia.GetP(itrk, 3), icas, tmp, stmp]
+                            stack[nstack] = [itrk_id, myPythia.GetP(itrk, 1), myPythia.GetP(itrk, 2),myPythia.GetP(itrk, 3), icas, tmp, stmp]
 
 print('Now at Ntup.Write()')
 Ntup.Write()
