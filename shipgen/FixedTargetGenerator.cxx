@@ -110,6 +110,33 @@ Bool_t FixedTargetGenerator::Init()
   fPythiaP =  new Pythia8::Pythia(); // pythia needed also for G4only, to copy 2mu BRs
   if (Option == "Primary" && !G4only){
    fPythiaN =  new Pythia8::Pythia();
+   const std::string xmlPath = "/cvmfs/ship-nightlies.cern.ch/pythia8.315/sw/slc9_x86-64/pythia/latest-release/share/Pythia8/xmldoc/";
+   fPythiaW = new Pythia8::Pythia(xmlPath);
+   // fPythiaW = new Pythia8::Pythia(); 
+   // fPythiaW =  new Pythia8::Pythia();
+
+
+   int pdgW184 = 1000741840;   // PDG code: 100ZZZAAAI (Z=74, A=184, I=0)
+   if (!fPythiaW->particleData.isParticle(pdgW184)) {
+       fPythiaW->particleData.addParticle(
+        pdgW184,       // PDG code
+        "W184",        // name
+        0,             // spinType (0 = scalar / nucleus approximation)
+        0,             // chargeType (0 = neutral)
+        0,             // colType (0 = color singlet)
+        171.3128,      // mass in GeV
+        0.0,           // width
+        171.3128,      // min mass
+        171.3128,      // max mass
+        0.0,           // tau0
+        false          // variable width        
+        );
+       std::cout << "Added W-184 (PDG " << pdgW184 << ") to Pythia particle table." << std::endl;
+   }
+
+
+
+
   }else if (Option != "charm" && Option != "beauty" && !G4only) {
    LOG(error) << "Option not known "<< Option.Data() << ", abort";
   }
@@ -122,14 +149,18 @@ Bool_t FixedTargetGenerator::Init()
 #endif
   std::vector<int> r = { 221, 221, 223, 223,   113, 331, 333};
   std::vector<int> c = {  6 ,  7,   5 ,  7,     5,   6,   9}; // decay channel mumu mumuX
-
   if (Option == "Primary" && !G4only){
    fPythiaP->settings.mode("Beams:idB",  2212);
    fPythiaN->settings.mode("Beams:idB",  2112);
+   fPythiaW->settings.mode("Beams:idB", 1000741840);  // 1000741840); // tungsten nucleus (Z=74, A=184)
+   fPythiaW->readString("HeavyIon:mode = 1");  // or 2 for user-defined nucleus
+   // fPythiaW->readString("SoftQCD:all = on");  // Enable hard QCD processes (scattering, etc.)
+   // fPythiaW->readString("HardQCD:all = on");  // Enable hard QCD processes (scattering, etc.)
+   // fPythiaW->readString("PartonLevel:all = on");  // Enable parton-level interactions (QCD partons)
   }else{
    fPythiaP->readString("ProcessLevel:all = off");
   }
-  std::array<Pythia8::Pythia*,2> plist = {fPythiaP,fPythiaN};
+  std::array<Pythia8::Pythia*,3> plist = {fPythiaP,fPythiaN,fPythiaW};
   Int_t pcount = 0;
   for(const auto& fPythia : plist) {
    if (pcount > 0 && (Option != "Primary" || G4only)){continue;}
@@ -141,7 +172,7 @@ Bool_t FixedTargetGenerator::Init()
     fPythia->settings.mode("Beams:idA",  2212);
     fPythia->settings.mode("Beams:frameType",  2);
     fPythia->settings.parm("Beams:eA", fMom);   // codespell:ignore parm
-    fPythia->settings.parm("Beams:eB", 0.);     // codespell:ignore parm
+    fPythia->settings.parm("Beams:eB", 0);     // codespell:ignore parm
    }
    if (JpsiMainly){
 // use this for all onia productions
@@ -246,8 +277,11 @@ Bool_t FixedTargetGenerator::Init()
    if (Option == "Primary"){
 #if PYTHIA_VERSION_INTEGER >= 8315
     evtgenN = new Pythia8::EvtGenDecays(fPythiaN, DecayFile.Data(), "", extPtr);
+    evtgenW = new Pythia8::EvtGenDecays(fPythiaW, DecayFile.Data(), "", extPtr);
+
 #else
     evtgenN = new EvtGenDecays(fPythiaN, DecayFile.Data(), ParticleFile.Data(),myEvtGenPtr);
+    evtgenW = new EvtGenDecays(fPythiaW, DecayFile.Data(), ParticleFile.Data(),myEvtGenPtr);
 #endif
    }
   }
@@ -367,6 +401,12 @@ Bool_t FixedTargetGenerator::ReadEvent(FairPrimaryGenerator* cpg)
       cpg->AddTrack(2212, 0., 0., fMom, (xOff + dx) / cm, (yOff + dy) / cm, start[2], -1, kTRUE, -1., 0., 1.);
       return kTRUE;
   }else if (Option == "Primary"){
+  if ((ZoverA > 0.4) && (ZoverA < 0.41)) { // check if this is tungsten, could be made cleaner
+    fPythiaW->next();
+    if (withEvtGen){evtgenW->decay();}
+    fPythia = fPythiaW;
+
+  } else {
    if (gRandom->Uniform(0.,1.) < ZoverA ){
     fPythiaP->next();
     if (withEvtGen){evtgenP->decay();}
@@ -376,6 +416,7 @@ Bool_t FixedTargetGenerator::ReadEvent(FairPrimaryGenerator* cpg)
     if (withEvtGen){evtgenN->decay();}
     fPythia = fPythiaN;
    }
+  }
   }else{
     if (nEntry==nEvents){
       LOG(info) << "Rewind input file: " << nEntry;

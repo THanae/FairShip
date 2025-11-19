@@ -68,6 +68,7 @@ class FixedTargetGenerator : public FairGenerator
   Double_t GetPotForCharm(){return nrpotspill/wspill;}
   Pythia8::Pythia* GetPythia() {return fPythiaP;}
   Pythia8::Pythia* GetPythiaN() {return fPythiaN;}
+  Pythia8::Pythia* GetPythiaW() {return fPythiaW;}
  private:
 
 #if PYTHIA_VERSION_INTEGER >= 8300
@@ -87,12 +88,15 @@ class FixedTargetGenerator : public FairGenerator
   FairLogger*  fLogger; //!   don't make it persistent, magic ROOT command
   Pythia8::Pythia* fPythiaN;            //!
   Pythia8::Pythia* fPythiaP;            //!
+  Pythia8::Pythia* fPythiaW;            //!
 #if PYTHIA_VERSION_INTEGER >= 8315
   Pythia8::EvtGenDecays* evtgenN;            //!
   Pythia8::EvtGenDecays* evtgenP;            //!
+  Pythia8::EvtGenDecays* evtgenW;            //!
 #else
   EvtGenDecays* evtgenN;            //!
   EvtGenDecays* evtgenP;            //!
+  EvtGenDecays* evtgenW;            //!
 #endif
   GenieGenerator* fMaterialInvestigator;  //!
   Bool_t withNtuple;               //! special option for Dark Photon physics studies

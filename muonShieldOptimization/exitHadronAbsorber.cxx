@@ -98,6 +98,32 @@ void exitHadronAbsorber::Initialize()
   // add also leptons, and photon
   // add pi0 111 eta 221 eta' 331  omega 223 for DM production
   TDatabasePDG* PDG = TDatabasePDG::Instance();
+
+
+  if (!PDG->GetParticle(1000741840)) {
+    PDG->AddParticle("W-184",       // name
+                     "Tungsten-184", // title
+                     171.3128,       // mass in GeV
+                     kTRUE,          // stable
+                     0.0,            // width
+                     0.0,            // charge (units of e)
+                     "Ion",          // ParticleClass
+                     1000741840      // PDG code
+                     );
+
+    // PDG->AddParticle("W182", "Tungsten-182", 179.9465, kTRUE, 0.0, 0.0, "Ion", 1000741829);
+    // PDG->AddParticle("Hf182","Hafnium-182", 181.948, kTRUE, 0.0, 0.0, "Ion", 1000721819);
+    // PDG->AddParticle("Tm173","Thulium-173", 172.938, kTRUE, 0.0, 0.0, "Ion", 1000691739);
+    // PDG->AddParticle("Lu176","Lutetium-176",175.942, kTRUE, 0.0, 0.0, "Ion", 1000711769);
+    // PDG->AddParticle("W184", "Tungsten-184",171.3128,kTRUE, 0.0, 0.0, "Ion", 1000741840);
+
+  }
+
+
+  //if (!PDG->GetParticle(1000741840)) {
+  //   PDG->AddParticle("W-184", "Tungsten-184", 171.3128, 0.0,
+  //                    0, 0, 0, 0, "Ion", 1000741840);
+  // }
   for(Int_t idnu=11; idnu<26; idnu+=1){
   // nu or anti-nu
    for (Int_t idadd=-1; idadd<3; idadd+=2){
