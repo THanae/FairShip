@@ -31,7 +31,7 @@ void Config() {
   /// When more than one options are selected, they should be separated with '+'
   /// character: eg. stepLimit+specialCuts.
   TG4RunConfiguration* runConfiguration = new TG4RunConfiguration(
-      "geomRoot", "FTFP_BERT_HP_EMZ", "stepLimiter+specialCuts+specialControls",
+      "geomRoot", "FTFP_BERT", "stepLimiter+specialCuts+specialControls",
       false,   // specialStacking (default)
       false);  // disable MT
 
