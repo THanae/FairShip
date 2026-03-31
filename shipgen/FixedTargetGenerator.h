@@ -107,7 +107,8 @@ class FixedTargetGenerator : public SHiP::Generator {
 
  private:
   std::shared_ptr<Pythia8::RndmEngine> fRandomEngine;  //!
-
+  Double_t fDx;
+  Double_t fDy;
  protected:
   Double_t fMom;       // proton momentum
   Bool_t fUseRandom1;  // flag to use TRandom1

@@ -8,6 +8,7 @@
 
 #include <array>
 #include <cmath>
+#include <memory>
 
 #include "BeamSmearingUtils.h"
 #include "FairMCEventHeader.h"
@@ -62,6 +63,7 @@ FixedTargetGenerator::FixedTargetGenerator() {
   Option = "Primary";
   wspill = 1.;  // event weight == 1 for primary events
   heartbeat = 1000;
+  Double_t fDx, fDy;
 }
 Bool_t FixedTargetGenerator::InitForCharmOrBeauty(TString fInName, Int_t nev,
                                                   Double_t npot, Int_t nStart) {
@@ -123,6 +125,38 @@ Bool_t FixedTargetGenerator::InitForCharmOrBeauty(TString fInName, Int_t nev,
 
   return kTRUE;
 }
+
+
+class ShipBeamShape : public Pythia8::BeamShape {
+public:
+  ShipBeamShape(Double_t* dx, Double_t* dy, Double_t mom, Double_t L)
+    : fdx(dx), fdy(dy), fMom(mom), fL(L) {}
+
+  void pick() override {
+    double currentDX = *fdx;
+    double currentDY = *fdy;
+    double r = std::sqrt(currentDX * currentDX + currentDY * currentDY) * 10;
+
+    // calculate angle based on displacement
+    double theta = std::atan2(r, fL);
+    double phi = std::atan2(currentDY, currentDX);
+
+    // apply momentum change
+    deltaPxA = fMom * sin(theta) * cos(phi);
+    deltaPyA = fMom * sin(theta) * sin(phi);
+    // keep total momentum = fMom
+    deltaPzA = fMom * (cos(theta) - 1.0);
+
+    vertexX = currentDX * 10;
+    vertexY = currentDY * 10;
+    vertexZ = 0.0;
+    vertexT = 0.0;
+  }
+private:
+  Double_t *fdx, *fdy;
+  Double_t fMom, fL;
+};
+
 // -----   Default Init   -------------------------------------------
 Bool_t FixedTargetGenerator::Init() {
   fPythiaP =
@@ -158,6 +192,11 @@ Bool_t FixedTargetGenerator::Init() {
       fPythia->settings.mode("Beams:frameType", 2);
       fPythia->settings.parm("Beams:eA", fMom);  // codespell:ignore parm
       fPythia->settings.parm("Beams:eB", 0.);    // codespell:ignore parm
+      fPythia->readString("Beams:allowVertexSpread = on");
+      fPythia->readString("Beams:allowMomentumSpread = on");
+
+      // fPythia->setBeamShapePtr(new ShipBeamShape(&fDx, &fDy, fMom, 10000.0));
+      fPythia->setBeamShapePtr(std::make_shared<ShipBeamShape>(&fDx, &fDy, fMom, 100000.0));
     }
     if (JpsiMainly) {
       // use this for all onia productions
@@ -329,7 +368,8 @@ FixedTargetGenerator::~FixedTargetGenerator() {}
 Bool_t FixedTargetGenerator::ReadEvent(FairPrimaryGenerator* cpg) {
   // Calculate beam smearing and painting
   auto [dx, dy] = CalculateBeamOffset(fsmearBeam, fPaintBeam);
-
+  fDx = dx;
+  fDy = dy;
   Double_t zinter = 0;
   Double_t ZoverA = 1.;
   if (!targetName.IsNull()) {
@@ -420,7 +460,7 @@ Bool_t FixedTargetGenerator::ReadEvent(FairPrimaryGenerator* cpg) {
       procID = kPPrimary;
     }  // probably primary and not from cascade
     cpg->AddTrack(static_cast<int>(n_mid), n_mpx, n_mpy, n_mpz,
-                  (xOff + dx) * cm, (yOff + dy) * cm, zinter * cm, -1, kFALSE,
+                  xOff * cm, yOff * cm, zinter * cm, -1, kFALSE,
                   n_mE, 0., wspill, procID);
     // second charm hadron in the event
     nTree->GetEvent(nEntry);
@@ -457,8 +497,8 @@ Bool_t FixedTargetGenerator::ReadEvent(FairPrimaryGenerator* cpg) {
       }
     }
     Double_t z = fPythia->event[ii].zProd() * mm + zinter * cm;
-    Double_t x = fPythia->event[ii].xProd() * mm + xOff * cm + dx * cm;
-    Double_t y = fPythia->event[ii].yProd() * mm + yOff * cm + dy * cm;
+    Double_t x = fPythia->event[ii].xProd() * mm + xOff * cm ;
+    Double_t y = fPythia->event[ii].yProd() * mm + yOff * cm ;
     Double_t tof =
         fPythia->event[ii].tProd() / (10 * c_light);  // to go from mm to s
     Double_t px = fPythia->event[ii].px();
