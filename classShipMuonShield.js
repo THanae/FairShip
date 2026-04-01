@@ -2,12 +2,11 @@ var classShipMuonShield =
 [
     [ "ShipMuonShield", "classShipMuonShield.html#a5d5ad91df9fc8ad44b3d77c9f4fdcd14", null ],
     [ "ShipMuonShield", "classShipMuonShield.html#a21c4058626af3ba4afb7100f8d1e4023", null ],
-    [ "~ShipMuonShield", "classShipMuonShield.html#a14c09abf8f8f662a955ecd22a02dae21", null ],
+    [ "~ShipMuonShield", "classShipMuonShield.html#ac713a92b34161406fb02070349dffc88", null ],
     [ "ConstructGeometry", "classShipMuonShield.html#a3ed6f246da768e38f2fe775dd523c0be", null ],
     [ "CreateArb8", "classShipMuonShield.html#ac3d03b895b44fbf2164d5202fd661287", null ],
     [ "CreateMagnet", "classShipMuonShield.html#adc4671e1413b00224c312f8f55ec65b7", null ],
     [ "Initialize", "classShipMuonShield.html#a7bbec66dfe6198b6507880fb2bd8696a", null ],
-    [ "InitMedium", "classShipMuonShield.html#ac4224450310d00f431be3d75bb3d6904", null ],
     [ "SetSNDSpace", "classShipMuonShield.html#a8b24e309025550c4afcc38fa25799293", null ],
     [ "dXgap", "classShipMuonShield.html#a64f7b519e98b0e17a2caae28e7caf2fd", null ],
     [ "dZ0", "classShipMuonShield.html#a25d8a1229a943532bbc3c02ebc7f8109", null ],

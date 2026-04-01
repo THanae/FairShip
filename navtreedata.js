@@ -29,89 +29,110 @@ var NAVTREE =
     [ "Changelog", "md_CHANGELOG.html", [
       [ "Unreleased", "md_CHANGELOG.html#autotoc_md1", [
         [ "Added", "md_CHANGELOG.html#autotoc_md2", null ],
-        [ "Changed", "md_CHANGELOG.html#autotoc_md3", null ],
-        [ "Fixed", "md_CHANGELOG.html#autotoc_md4", null ],
-        [ "Removed", "md_CHANGELOG.html#autotoc_md5", null ]
+        [ "Fixed", "md_CHANGELOG.html#autotoc_md3", null ],
+        [ "Changed", "md_CHANGELOG.html#autotoc_md4", null ],
+        [ "Fixed", "md_CHANGELOG.html#autotoc_md5", null ],
+        [ "Changed", "md_CHANGELOG.html#autotoc_md6", null ],
+        [ "Added", "md_CHANGELOG.html#autotoc_md7", null ],
+        [ "Changed", "md_CHANGELOG.html#autotoc_md8", null ],
+        [ "Fixed", "md_CHANGELOG.html#autotoc_md9", null ],
+        [ "Removed", "md_CHANGELOG.html#autotoc_md10", null ]
       ] ],
-      [ "25.12 - 2025-12-22", "md_CHANGELOG.html#autotoc_md6", [
-        [ "Added", "md_CHANGELOG.html#autotoc_md7", [
-          [ "Physics and Simulation", "md_CHANGELOG.html#autotoc_md8", null ],
-          [ "SND Detector System", "md_CHANGELOG.html#autotoc_md9", null ],
-          [ "Geometry and Target Station", "md_CHANGELOG.html#autotoc_md10", null ],
-          [ "Data Classes and I/O", "md_CHANGELOG.html#autotoc_md11", null ],
-          [ "Tools and Utilities", "md_CHANGELOG.html#autotoc_md12", null ],
-          [ "Detector Improvements", "md_CHANGELOG.html#autotoc_md13", null ],
-          [ "Reconstruction", "md_CHANGELOG.html#autotoc_md14", null ]
+      [ "25.12 - 2025-12-22", "md_CHANGELOG.html#autotoc_md11", [
+        [ "Added", "md_CHANGELOG.html#autotoc_md12", [
+          [ "Physics and Simulation", "md_CHANGELOG.html#autotoc_md13", null ],
+          [ "SND Detector System", "md_CHANGELOG.html#autotoc_md14", null ],
+          [ "Geometry and Target Station", "md_CHANGELOG.html#autotoc_md15", null ],
+          [ "Data Classes and I/O", "md_CHANGELOG.html#autotoc_md16", null ],
+          [ "Tools and Utilities", "md_CHANGELOG.html#autotoc_md17", null ],
+          [ "Detector Improvements", "md_CHANGELOG.html#autotoc_md18", null ],
+          [ "Reconstruction", "md_CHANGELOG.html#autotoc_md19", null ]
         ] ],
-        [ "Changed", "md_CHANGELOG.html#autotoc_md15", [
-          [ "Data Structure Modernization", "md_CHANGELOG.html#autotoc_md16", null ],
-          [ "Physics and Simulation", "md_CHANGELOG.html#autotoc_md17", null ],
-          [ "Target Station Geometry", "md_CHANGELOG.html#autotoc_md18", null ],
-          [ "Digitisation Framework", "md_CHANGELOG.html#autotoc_md19", null ],
-          [ "Geometry Configuration System", "md_CHANGELOG.html#autotoc_md20", null ],
-          [ "Muon Shield and Field Maps", "md_CHANGELOG.html#autotoc_md21", null ],
-          [ "Detector Geometry Updates", "md_CHANGELOG.html#autotoc_md22", null ],
-          [ "Strawtubes and SST", "md_CHANGELOG.html#autotoc_md23", null ],
-          [ "SND and MTC", "md_CHANGELOG.html#autotoc_md24", null ],
-          [ "Generators", "md_CHANGELOG.html#autotoc_md25", null ],
-          [ "Reconstruction", "md_CHANGELOG.html#autotoc_md26", null ],
-          [ "Data Classes", "md_CHANGELOG.html#autotoc_md27", null ],
-          [ "Build System and Dependencies", "md_CHANGELOG.html#autotoc_md28", null ],
-          [ "Code Quality and Maintenance", "md_CHANGELOG.html#autotoc_md29", null ]
+        [ "Changed", "md_CHANGELOG.html#autotoc_md20", [
+          [ "Data Structure Modernization", "md_CHANGELOG.html#autotoc_md21", null ],
+          [ "Physics and Simulation", "md_CHANGELOG.html#autotoc_md22", null ],
+          [ "Target Station Geometry", "md_CHANGELOG.html#autotoc_md23", null ],
+          [ "Digitisation Framework", "md_CHANGELOG.html#autotoc_md24", null ],
+          [ "Geometry Configuration System", "md_CHANGELOG.html#autotoc_md25", null ],
+          [ "Muon Shield and Field Maps", "md_CHANGELOG.html#autotoc_md26", null ],
+          [ "Detector Geometry Updates", "md_CHANGELOG.html#autotoc_md27", null ],
+          [ "Strawtubes and SST", "md_CHANGELOG.html#autotoc_md28", null ],
+          [ "SND and MTC", "md_CHANGELOG.html#autotoc_md29", null ],
+          [ "Generators", "md_CHANGELOG.html#autotoc_md30", null ],
+          [ "Reconstruction", "md_CHANGELOG.html#autotoc_md31", null ],
+          [ "Data Classes", "md_CHANGELOG.html#autotoc_md32", null ],
+          [ "Build System and Dependencies", "md_CHANGELOG.html#autotoc_md33", null ],
+          [ "Code Quality and Maintenance", "md_CHANGELOG.html#autotoc_md34", null ]
         ] ],
-        [ "Fixed", "md_CHANGELOG.html#autotoc_md30", [
-          [ "Geometry", "md_CHANGELOG.html#autotoc_md31", null ],
-          [ "Simulation and Generators", "md_CHANGELOG.html#autotoc_md32", null ],
-          [ "MTC and SND", "md_CHANGELOG.html#autotoc_md33", null ],
-          [ "Muon Shield and Field", "md_CHANGELOG.html#autotoc_md34", null ],
-          [ "Data Classes and I/O", "md_CHANGELOG.html#autotoc_md35", null ],
-          [ "Event Display and Reconstruction", "md_CHANGELOG.html#autotoc_md36", null ],
-          [ "Build System", "md_CHANGELOG.html#autotoc_md37", null ],
-          [ "Code Quality", "md_CHANGELOG.html#autotoc_md38", null ]
+        [ "Fixed", "md_CHANGELOG.html#autotoc_md35", [
+          [ "Geometry", "md_CHANGELOG.html#autotoc_md36", null ],
+          [ "Simulation and Generators", "md_CHANGELOG.html#autotoc_md37", null ],
+          [ "MTC and SND", "md_CHANGELOG.html#autotoc_md38", null ],
+          [ "Muon Shield and Field", "md_CHANGELOG.html#autotoc_md39", null ],
+          [ "Data Classes and I/O", "md_CHANGELOG.html#autotoc_md40", null ],
+          [ "Event Display and Reconstruction", "md_CHANGELOG.html#autotoc_md41", null ],
+          [ "Build System", "md_CHANGELOG.html#autotoc_md42", null ],
+          [ "Code Quality", "md_CHANGELOG.html#autotoc_md43", null ]
         ] ],
-        [ "Removed", "md_CHANGELOG.html#autotoc_md39", [
-          [ "Custom Utilities", "md_CHANGELOG.html#autotoc_md40", null ],
-          [ "Build System", "md_CHANGELOG.html#autotoc_md41", null ],
-          [ "Obsolete Detector Configurations", "md_CHANGELOG.html#autotoc_md42", null ],
-          [ "Muon Shield", "md_CHANGELOG.html#autotoc_md43", null ],
-          [ "Detector Components", "md_CHANGELOG.html#autotoc_md44", null ],
-          [ "Obsolete Code", "md_CHANGELOG.html#autotoc_md45", null ],
-          [ "Build System", "md_CHANGELOG.html#autotoc_md46", null ]
+        [ "Removed", "md_CHANGELOG.html#autotoc_md44", [
+          [ "Custom Utilities", "md_CHANGELOG.html#autotoc_md45", null ],
+          [ "Build System", "md_CHANGELOG.html#autotoc_md46", null ],
+          [ "Obsolete Detector Configurations", "md_CHANGELOG.html#autotoc_md47", null ],
+          [ "Muon Shield", "md_CHANGELOG.html#autotoc_md48", null ],
+          [ "Detector Components", "md_CHANGELOG.html#autotoc_md49", null ],
+          [ "Obsolete Code", "md_CHANGELOG.html#autotoc_md50", null ],
+          [ "Build System", "md_CHANGELOG.html#autotoc_md51", null ]
         ] ]
       ] ],
-      [ "25.01", "md_CHANGELOG.html#autotoc_md47", [
-        [ "Added", "md_CHANGELOG.html#autotoc_md48", null ],
-        [ "Fixed", "md_CHANGELOG.html#autotoc_md49", null ],
-        [ "Changed", "md_CHANGELOG.html#autotoc_md50", null ],
-        [ "Removed", "md_CHANGELOG.html#autotoc_md51", null ]
-      ] ],
-      [ "24.11", "md_CHANGELOG.html#autotoc_md52", [
+      [ "25.01", "md_CHANGELOG.html#autotoc_md52", [
         [ "Added", "md_CHANGELOG.html#autotoc_md53", null ],
         [ "Fixed", "md_CHANGELOG.html#autotoc_md54", null ],
         [ "Changed", "md_CHANGELOG.html#autotoc_md55", null ],
         [ "Removed", "md_CHANGELOG.html#autotoc_md56", null ]
       ] ],
-      [ "24.10 - Freiburg", "md_CHANGELOG.html#autotoc_md57", [
+      [ "24.11", "md_CHANGELOG.html#autotoc_md57", [
         [ "Added", "md_CHANGELOG.html#autotoc_md58", null ],
         [ "Fixed", "md_CHANGELOG.html#autotoc_md59", null ],
         [ "Changed", "md_CHANGELOG.html#autotoc_md60", null ],
         [ "Removed", "md_CHANGELOG.html#autotoc_md61", null ]
+      ] ],
+      [ "24.10 - Freiburg", "md_CHANGELOG.html#autotoc_md62", [
+        [ "Added", "md_CHANGELOG.html#autotoc_md63", null ],
+        [ "Fixed", "md_CHANGELOG.html#autotoc_md64", null ],
+        [ "Changed", "md_CHANGELOG.html#autotoc_md65", null ],
+        [ "Removed", "md_CHANGELOG.html#autotoc_md66", null ]
       ] ]
     ] ],
-    [ "README", "md_field_2README.html", null ],
-    [ "FairShip", "md_README.html", [
-      [ "Introduction", "md_README.html#autotoc_md64", [
-        [ "Branches", "md_README.html#autotoc_md65", null ]
-      ] ],
-      [ "Build Instructions using CVMFS", "md_README.html#autotoc_md66", null ],
-      [ "Local build, without access to CVMFS", "md_README.html#autotoc_md67", null ],
-      [ "Run instructions", "md_README.html#autotoc_md68", null ],
-      [ "Docker instructions", "md_README.html#autotoc_md69", null ],
-      [ "Troubleshooting information", "md_README.html#autotoc_md70", null ],
-      [ "Documentation", "md_README.html#autotoc_md71", null ],
-      [ "License", "md_README.html#autotoc_md72", null ],
-      [ "Contributing code", "md_README.html#autotoc_md73", null ]
+    [ "pag_example", "pag_example.html", null ],
+    [ "A documentation page", "page1.html", [
+      [ "An example section", "page1.html#sec", [
+        [ "The first subsection", "page1.html#subsection1", null ],
+        [ "The second subsection", "page1.html#subsection2", null ]
+      ] ]
     ] ],
+    [ "Another page", "page2.html", null ],
+    [ "README", "md_field_README.html", null ],
+    [ "FairShip", "md_README.html", [
+      [ "Introduction", "md_README.html#autotoc_md69", [
+        [ "Branches", "md_README.html#autotoc_md70", null ]
+      ] ],
+      [ "Build Instructions using CVMFS", "md_README.html#autotoc_md71", null ],
+      [ "Local build, without access to CVMFS", "md_README.html#autotoc_md72", null ],
+      [ "Run instructions", "md_README.html#autotoc_md73", null ],
+      [ "Docker instructions", "md_README.html#autotoc_md74", null ],
+      [ "Troubleshooting information", "md_README.html#autotoc_md75", null ],
+      [ "Documentation", "md_README.html#autotoc_md76", null ],
+      [ "License", "md_README.html#autotoc_md77", null ],
+      [ "Contributing code", "md_README.html#autotoc_md78", null ]
+    ] ],
+    [ "Configuration files for GENIE simulations", "md_shipgen_genie_config_README.html", [
+      [ "Introduction", "md_shipgen_genie_config_README.html#autotoc_md80", null ],
+      [ "Details", "md_shipgen_genie_config_README.html#autotoc_md81", null ],
+      [ "History", "md_shipgen_genie_config_README.html#autotoc_md82", null ],
+      [ "Notes on particle decays", "md_shipgen_genie_config_README.html#autotoc_md83", null ]
+    ] ],
+    [ "Bug List", "bug.html", null ],
+    [ "Modules", "modules.html", "modules" ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [
@@ -130,7 +151,8 @@ var NAVTREE =
         [ "Variables", "functions_vars.html", "functions_vars" ],
         [ "Typedefs", "functions_type.html", null ],
         [ "Enumerations", "functions_enum.html", null ],
-        [ "Enumerator", "functions_eval.html", null ]
+        [ "Enumerator", "functions_eval.html", null ],
+        [ "Related Functions", "functions_rela.html", null ]
       ] ]
     ] ],
     [ "Files", "files.html", [
@@ -144,42 +166,44 @@ var NAVTREE =
         [ "Enumerator", "globals_eval.html", null ],
         [ "Macros", "globals_defs.html", null ]
       ] ]
-    ] ]
+    ] ],
+    [ "Examples", "examples.html", "examples" ]
   ] ]
 ];
 
 var NAVTREEINDEX =
 [
 "ACTSReco_8py.html",
-"ShipFieldMaker_8cxx.html",
-"ana__ShipMuon_8py.html#a7c19f0ac702070d2458480d245c643c0",
-"classFixedTargetGenerator.html#a0e8e528cc53ba28b6aa7560f471330ae",
-"classMTCDetPoint.html#a046c1a2ec58385c0fbd05c35e49cfb91",
-"classPythia8Generator.html#abab3c221126823904c878ab6fd80021f",
-"classShipFieldMaker.html#a0c5203ee14b827b04a5a7f0c6b000c5d",
-"classShipParticle.html#a22ecadd7018c7d04394d184b1e829670",
-"classTarget.html#a182b6846a76311d9842053654bf5175d",
-"classTrackInfo.html#a67c01da8fb85e47c8cdb33630dab900b",
-"classeventDisplay_1_1IO.html#a94c7300f13d1e21f753bb7b0c9ee77ec",
-"classrpvsusy_1_1RPVSUSYbranchings.html#a19df3958d4a6e134b77bd25df0991c15",
-"classsplitcal.html#a7f6f2d585f38b166dce6daf0328ed348",
-"classstrawtubesContFact.html",
-"compare__histograms_8py.html#a3b917802d991eb03dd0e4b41fda9b16d",
-"extractNeutrinosAndUpdateWeight_8py.html#ac400864a3817612dd667b12b5a93fffe",
-"hepunit_8py.html#aac81f7b697545424c233d6e9a681de99",
-"make__nTuple__SBT_8py.html#a740911fa9e8ed96e446b67390de2a688",
-"muonShieldOptimization_2makeMuonDIS_8py.html#a9b07519f354a7634f0da0ed8f56d5bb0",
-"namespaceana__ShipMuon.html#ac45faf305db48f018e61550f1bc6333d",
-"namespaceextractMuonsAndUpdateWeight.html#af67101ca8beb9723e8fc5463dd0c17e6",
-"namespacemakeCascade.html#a59464c43d4bb7e8f058da677de563c2c",
-"namespacemake__nTuple__SBT.html#ae2208ddc7075376e9b26686adda2083f",
-"namespacereadDecayTable.html#a02bdb1dd20ec4dc591b37bfc0aad40a4",
-"namespacerun__simScript.html#a248635485cd4f6bdad43e3dc17be4648",
-"namespaceshipunit.html#aa8fa65f70ab4a42c2dec42716073793d",
-"radio_8py.html#a2173c1232cd54d49a5435ae267c4f764",
-"run__simScript_8py.html#a04716d6c09866d36dcb7fe7631f825b9",
-"shipunit_8py.html#a730b3b70955903ebe32c4f4299651a3c",
-"study__thinTarget_8py.html#a7bd06a17bb8831e6dabcf07c3e09402e"
+"ShipDetectorList_8h.html#a1806da1a0fbae8ab81f7330906f65680a62cf4a744fec236a91e51893814a99df",
+"ana__ShipMuon_8py.html#a36b3ccb533d84d54030247733ea80f98",
+"classDPPythia8Generator.html#acfd3be3b6cbb13221aa4580c6d342f2b",
+"classHNLPythia8Generator.html#a5aad52eae7045c93ac6eb56a34b7304d",
+"classNtupleGenerator.html#afa96b2b3581fcffb76192830c8afbb5e",
+"classSciFiMapping_1_1SciFiMapping.html#a1eb581a8b0869e3ffa49a81c01c3d9d0",
+"classShipFieldMaker.html#ac1801a74f4a502f9998ebf6f445f256c",
+"classShipPassiveContFact.html#ae952fbf54a669a70b9f16087b0fea1d7",
+"classTargetPoint.html",
+"classeventDisplay_1_1DrawTracks.html#a5871d609b34887e6db3b161e6249163d",
+"classhnl_1_1HNLbranchings.html#a89cbb6c5120602cde4f7a23dd0427927",
+"classshipVertex_1_1Task.html#a72ace079d27346ce3372694536b47068",
+"classstrawtubes.html#a698d1452dea289218cab634354699517",
+"classvetoPoint.html#aead4d18523559cd3e9cd89454f10572d",
+"eventDisplay_8py.html#abd1f507a84e17c7a71f425a9db467bc5",
+"hepunit_8py.html#a0b6881857afaba2bf49760b305de6035",
+"makeDecay_8py.html#a6fe8eaf948b1566b26ae99e59d1f9f16",
+"md_CHANGELOG.html#autotoc_md49",
+"namespaceShipAna.html#aef0f50d1b7c87701251a4d94d293e303",
+"namespacedecorators.html#ab50f007ecb21b5b1a7797371c666d96f",
+"namespacehepunit.html#a2fce90db6b981f1b770129bf9329d86e",
+"namespacemakeGenieEvents.html#a43aff25673fa84d9c3c8f83835ea5099",
+"namespacemembers_func_o.html",
+"namespacerunPythia8.html#ae3a3275a7e71c83701ad0337df55065c",
+"namespacerun__simScript.html#ae49febd49d327dfcdf13f395786856a3",
+"namespacestrip__example.html",
+"rootUtils_8py.html#aea2713c1fd3249a6dd7ea82c6ccc8ef5",
+"run__simScript_8py.html#a324d5620e02a104287e12097df596e9c",
+"shipunit_8py.html#a6b859e93b8e87bcbe54fac2b365c6ba3",
+"study__muMSC_8py.html#af40bec1213f786d13938aea4817b82c4"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
