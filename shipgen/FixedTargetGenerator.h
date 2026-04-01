@@ -104,6 +104,7 @@ class FixedTargetGenerator : public SHiP::Generator {
   Double_t GetPotForCharm() { return nrpotspill / wspill; }
   Pythia8::Pythia* GetPythia() { return fPythiaP; }
   Pythia8::Pythia* GetPythiaN() { return fPythiaN; }
+  Pythia8::Pythia* GetPythiaW() { return fPythiaW; }
 
  private:
   std::shared_ptr<Pythia8::RndmEngine> fRandomEngine;  //!
@@ -119,8 +120,10 @@ class FixedTargetGenerator : public SHiP::Generator {
   FairLogger* fLogger;        //!   don't make it persistent, magic ROOT command
   Pythia8::Pythia* fPythiaN;  //!
   Pythia8::Pythia* fPythiaP;  //!
+  Pythia8::Pythia* fPythiaW;  //!
   Pythia8::EvtGenDecays* evtgenN;         //!
   Pythia8::EvtGenDecays* evtgenP;         //!
+  Pythia8::EvtGenDecays* evtgenW;         //!
   GenieGenerator* fMaterialInvestigator;  //!
   Bool_t withNtuple;  //! special option for Dark Photon physics studies
   TNtuple* fNtuple;   //!

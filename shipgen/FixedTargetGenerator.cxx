@@ -22,6 +22,7 @@
 #include "TMCProcess.h"
 #include "TMath.h"
 #include "TROOT.h"
+#include "TDatabasePDG.h"
 
 using ShipUnit::cm;
 using ShipUnit::mm;
@@ -125,10 +126,21 @@ Bool_t FixedTargetGenerator::InitForCharmOrBeauty(TString fInName, Int_t nev,
 }
 // -----   Default Init   -------------------------------------------
 Bool_t FixedTargetGenerator::Init() {
+  TDatabasePDG::Instance()->AddParticle("184W", "184W", 171.321, kTRUE, 0, 222, "Nucleus", 1000741840);
   fPythiaP =
       new Pythia8::Pythia();  // pythia needed also for G4only, to copy 2mu BRs
   if (Option == "Primary" && !G4only) {
     fPythiaN = new Pythia8::Pythia();
+    fPythiaW = new Pythia8::Pythia();
+    // fPythiaW->particleData.addParticle(1000741840, "184W", 6, 222, 0, 171.321);
+    fPythiaW->particleData.addParticle(1000741840, "184W", 0, 0, 0, 171.321);
+    fPythiaW->readString("HeavyIon:mode = 1");
+    fPythiaW->readString("SoftQCD:nonDiffractive = on");
+    fPythiaW->readString("SoftQCD:singleDiffractive = on");
+    fPythiaW->readString("SoftQCD:doubleDiffractive = on");
+    // fPythiaW->readString("HeavyIon:forceUnitWeight = on");
+    // fPythiaW->readString("HeavyIon:bWidth = 7.0");
+    // fPythiaW->readString("HeavyIon:bWidthCut = 3.0");
   } else if (Option != "charm" && Option != "beauty" && !G4only) {
     LOG(error) << "Option not known " << Option.Data() << ", abort";
   }
@@ -140,10 +152,11 @@ Bool_t FixedTargetGenerator::Init() {
   if (Option == "Primary" && !G4only) {
     fPythiaP->settings.mode("Beams:idB", 2212);
     fPythiaN->settings.mode("Beams:idB", 2112);
+    fPythiaW->settings.mode("Beams:idB", 1000741840);
   } else {
     fPythiaP->readString("ProcessLevel:all = off");
   }
-  std::array<Pythia8::Pythia*, 2> plist = {fPythiaP, fPythiaN};
+  std::array<Pythia8::Pythia*, 3> plist = {fPythiaP, fPythiaN, fPythiaW};
   Int_t pcount = 0;
   for (const auto& fPythia : plist) {
     if (pcount > 0 && (Option != "Primary" || G4only)) {
@@ -260,6 +273,8 @@ Bool_t FixedTargetGenerator::Init() {
     if (Option == "Primary") {
       evtgenN =
           new Pythia8::EvtGenDecays(fPythiaN, DecayFile.Data(), "", extPtr);
+      evtgenW =
+          new Pythia8::EvtGenDecays(fPythiaW, DecayFile.Data(), "", extPtr);
     }
   }
   if (targetFromGeometry) {
@@ -380,7 +395,13 @@ Bool_t FixedTargetGenerator::ReadEvent(FairPrimaryGenerator* cpg) {
                   start[2], -1, kTRUE, -1., 0., 1.);
     return kTRUE;
   } else if (Option == "Primary") {
-    if (gRandom->Uniform(0., 1.) < ZoverA) {
+    if ((ZoverA > 0.39) && (ZoverA < 0.42)) {
+      fPythiaW->next();
+      if (withEvtGen) {
+        evtgenW->decay();
+      }
+      fPythia = fPythiaW;
+    } else if (gRandom->Uniform(0., 1.) < ZoverA) {
       fPythiaP->next();
       if (withEvtGen) {
         evtgenP->decay();
@@ -442,6 +463,19 @@ Bool_t FixedTargetGenerator::ReadEvent(FairPrimaryGenerator* cpg) {
   }
   TMCProcess procID;
   for (Int_t ii = 1; ii < fPythia->event.size(); ii++) {
+
+    int pdg_ion = fPythia->event[ii].id();
+    // 100ZZZAAAI is the range for nuclear fragments
+    if (pdg_ion > 1000000000 && !TDatabasePDG::Instance()->GetParticle(pdg_ion)) {
+        int Z_ion = (pdg_ion / 10000) % 1000;
+        int A_ion = (pdg_ion / 10) % 1000;
+        TString name_ion = Form("Ion_%d_%d", Z_ion, A_ion);
+        double mass_ion = fPythia->event[ii].m();
+        // Register it so FairRoot/GEANT4 recognizes it
+        TDatabasePDG::Instance()->AddParticle( name_ion, name_ion, mass_ion, kTRUE, 0, Z_ion*3, "Ion", pdg_ion);
+        LOG(info) << "Dynamically registered fragment: " << name_ion << " (PDG: " << pdg_ion << ")";
+    }
+
     Double_t e = fPythia->event[ii].e();
     Double_t m = fPythia->event[ii].m();
     Double_t pz = fPythia->event[ii].pz();
